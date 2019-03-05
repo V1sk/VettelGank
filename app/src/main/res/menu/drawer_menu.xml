@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+                android:id="@+id/menu_today"
+                android:icon="@drawable/ic_date_range_black_24dp"
+                android:checked="true"
+                android:title="@string/today"/>
+        <item
+                android:id="@+id/menu_android"
+                android:icon="@drawable/ic_android_black_24dp"
+                android:title="@string/android"/>
+        <item
+                android:id="@+id/menu_ios"
+                android:icon="@drawable/ic_apple_black"
+                android:title="@string/ios"/>
+
+        <item
+                android:id="@+id/menu_app"
+                android:icon="@drawable/ic_app_black_24dp"
+                android:title="@string/app"/>
+
+        <item
+                android:id="@+id/menu_web"
+                android:icon="@drawable/ic_web_black_24dp"
+                android:title="@string/web"/>
+
+        <item
+                android:id="@+id/menu_extra"
+                android:icon="@drawable/ic_extra_sources_black_24dp"
+                android:title="@string/extra_sources"/>
+        <item
+                android:id="@+id/menu_welfare"
+                android:icon="@drawable/ic_filter_vintage_black_24dp"
+                android:title="@string/welfare"/>
+
+        <!--视频栏目似乎不可用？-->
+        <!--<item-->
+                <!--android:id="@+id/menu_video"-->
+                <!--android:icon="@drawable/ic_video_black_24dp"-->
+                <!--android:title="@string/video"/>-->
+    </group>
+
+    <item android:title="@string/about">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                        android:id="@+id/menu_about"
+                        android:icon="@drawable/ic_info_black_24dp"
+                        android:title="@string/about"/>
+            </group>
+        </menu>
+    </item>
+</menu>

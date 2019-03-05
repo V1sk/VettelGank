@@ -1,0 +1,35 @@
+<resources>
+    <string name="app_name">Vettel\'s Gank</string>
+    <string name="gank">干货</string>
+    <string name="today">今日干货</string>
+    <string name="android">Android</string>
+    <string name="ios">iOS</string>
+    <string name="web">前端</string>
+    <string name="welfare">福利</string>
+    <string name="about">关于</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="loading_more">正在加载</string>
+    <string name="click_to_retry">加载失败，点击重试</string>
+    <string name="load_end">已加载所有数据</string>
+    <string name="data_error">参数不合法</string>
+    <string name="dialog_ok">确认</string>
+    <string name="dialog_cancel">取消</string>
+    <string name="photo_transition">photo_transition</string>
+    <string name="search">搜索</string>
+    <string name="app">App</string>
+    <string name="search_hint">输入关键字，搜索干货</string>
+    <string name="search_content_empty">请输入要搜索的内容</string>
+    <string name="extra_sources">拓展资源</string>
+    <string name="about_app">Vettel\'s Gank是基于gank.io开放Api实现的一款非官方干货集中营客户端。\n\n官方网站：http://gank.io \n项目地址：https://github.com/V1sk/VettelGank\n作者博客：https://cjw-blog.net</string>
+    <string name="video">休息视频</string>
+    <string name="project_highlight">项目亮点</string>
+    <string name="highlight_tips">本项目使用Kotlin作为编程语言，展示了一些Kotlin优秀的语言特性，采用 \"Android Architecture
+        Blueprints\" 中的MVP架构作为实现基础，并实现了Repository的数据库缓存/内存缓存、Repository层的UI无感分页加载思路。使用AndroidX组件库以及
+        Jetpack构建更加可靠快速的程序。
+    </string>
+    <string name="open_source">开源库</string>
+    <string name="open_source_content">Room:https://developer.android.google.cn/jetpack\nAnko:https://github.com/Kotlin/anko\nGlide:https://github.com/bumptech/glide\nPhotoView:https://github.com/chrisbanes/PhotoView\nGson:https://github.com/google/gson</string>
+</resources>
