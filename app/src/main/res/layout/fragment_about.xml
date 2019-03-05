@@ -11,9 +11,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+        <ImageView
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/app_icon"
+                android:layout_width="100dp"
+                android:layout_height="100dp"/>
+
         <TextView
                 style="@style/TextTitle"
                 android:text="@string/app_name"
+                android:layout_marginTop="8dp"
+                android:gravity="center_horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
