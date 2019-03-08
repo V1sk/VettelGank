@@ -6,15 +6,16 @@ import android.os.Build
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
-import androidx.annotation.ColorInt
 import androidx.annotation.IdRes
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.core.graphics.ColorUtils
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProviders
+import com.cjw.vettelgank.ui.ViewModelFactory
 
 
 fun AppCompatActivity.replaceFragmentInActivity(fragment: Fragment, @IdRes frameId: Int, tag: String) {
@@ -61,11 +62,5 @@ private inline fun FragmentManager.transact(action: FragmentTransaction.() -> Un
     }.commit()
 }
 
-private fun isLightColor(@ColorInt color: Int): Boolean {
-    return ColorUtils.calculateLuminance(color) >= 0.5
-}
-
-@ColorInt
-private fun getStatusBarColor(): Int {
-    return Color.WHITE
-}
+fun <T : ViewModel> AppCompatActivity.obtainViewModel(viewModelClass: Class<T>) =
+    ViewModelProviders.of(this, ViewModelFactory.getInstance(application)).get(viewModelClass)

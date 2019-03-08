@@ -9,29 +9,16 @@ class GankDailyRepository private constructor(
     private val gankDailyLocalSource: GankDailyLocalSource
 ) : GankDailySource {
 
-    private var cacheDailyData: GankDailyData? = null // memory cache
-    private var cacheIsDirty = false
-
-    override fun refreshGank() {
-        cacheIsDirty = true
-    }
+    private var firstLoad = false
 
     override fun gankDaily(callback: GankDailySource.LoadGankCallback) {
-        if (cacheDailyData == null) {
-            // no memory cache, try to load db cache first
+        if (firstLoad) {
+            // first time, load cache from database
             getLocalGankDaily(callback)
-        } else {
-            if (!cacheIsDirty) {
-                callback.onGankLoaded(cacheDailyData!!)
-                return
-            }
+            firstLoad = false
         }
 
-        if (cacheIsDirty) {
-            getRemoteGankDaily(callback)
-        } else {
-            getLocalGankDaily(callback)
-        }
+        getRemoteGankDaily(callback)
 
 
     }
@@ -39,7 +26,6 @@ class GankDailyRepository private constructor(
     private fun getLocalGankDaily(callback: GankDailySource.LoadGankCallback) {
         gankDailyLocalSource.gankDaily(object : GankDailySource.LoadGankCallback {
             override fun onGankLoaded(gankDailyData: GankDailyData) {
-                refreshCache(gankDailyData)
                 callback.onGankLoaded(gankDailyData)
             }
 
@@ -54,7 +40,6 @@ class GankDailyRepository private constructor(
         gankDailyRemoteSource.gankDaily(object : GankDailySource.LoadGankCallback {
 
             override fun onGankLoaded(gankDailyData: GankDailyData) {
-                refreshCache(gankDailyData)
                 saveGankDaily(gankDailyData)
                 callback.onGankLoaded(gankDailyData)
             }
@@ -65,12 +50,6 @@ class GankDailyRepository private constructor(
 
         })
     }
-
-    private fun refreshCache(gankDailyData: GankDailyData) {
-        cacheDailyData = gankDailyData
-        cacheIsDirty = false
-    }
-
     override fun deleteGankDaily() {
         gankDailyLocalSource.deleteGankDaily()
     }

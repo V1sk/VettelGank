@@ -7,76 +7,49 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cjw.vettelgank.R
-import com.cjw.vettelgank.data.GankDailyData
-import com.cjw.vettelgank.data.ui.GankItem
+import com.cjw.vettelgank.databinding.FragmentGankBinding
 import com.cjw.vettelgank.ui.adapter.GankDailyAdapter
-import kotlinx.android.synthetic.main.fragment_gank.*
+import com.cjw.vettelgank.ui.home.MainActivity
 
-class GankDailyFragment : Fragment(), GankDailyContract.View {
+class GankDailyFragment : Fragment() {
 
-    override lateinit var presenter: GankDailyContract.Presenter
-
-    private val gankItemList: MutableList<GankItem> = mutableListOf()
-    private lateinit var gankDailyAdapter: GankDailyAdapter
-
-//    lateinit var imageLoadedCallback: MainActivity.ImageLoaderCallback
+    private lateinit var viewBinding: FragmentGankBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_gank, container, false)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        rv_gank_daily.layoutManager = LinearLayoutManager(activity)
-        rv_gank_daily.setHasFixedSize(true)
-        rv_gank_daily.addItemDecoration(DividerItemDecoration(activity, DividerItemDecoration.VERTICAL))
-        gankDailyAdapter = GankDailyAdapter(gankItemList)
-        rv_gank_daily.adapter = gankDailyAdapter
-        swipe_refresh_layout.setOnRefreshListener {
-            refreshData()
+        viewBinding = FragmentGankBinding.inflate(inflater, container, false).apply {
+            viewModel = (activity as MainActivity).obtainGankDailyViewModel()
         }
-        rv_gank_daily.post {
-            swipe_refresh_layout.isRefreshing = true
-            refreshData()
-        }
+        return viewBinding.root
     }
 
-    private fun refreshData() {
-        presenter.start()
-    }
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        viewBinding.lifecycleOwner = viewLifecycleOwner
 
-    override fun showGankDaily(gankDailyData: GankDailyData) {
-        setLoadingIndicator(false)
-        this.gankItemList.clear()
-        this.gankItemList.addAll(gankDailyData.toGankUIItem())
-        gankDailyAdapter.notifyDataSetChanged()
-    }
+        // init recycler view
+        viewBinding.rvGankDaily.layoutManager = LinearLayoutManager(activity)
+        viewBinding.rvGankDaily.addItemDecoration(DividerItemDecoration(activity, DividerItemDecoration.VERTICAL))
+        viewBinding.rvGankDaily.adapter = GankDailyAdapter()
 
-    override fun setLoadingIndicator(active: Boolean) {
-        if (rv_gank_daily == null)
-            return
-        if (active) {
-            rv_gank_daily.post {
-                swipe_refresh_layout.isRefreshing = true
-                refreshData()
-            }
-        } else {
-            rv_gank_daily.post {
-                swipe_refresh_layout.isRefreshing = false
-            }
-        }
-    }
+        //add observer
+        viewBinding.viewModel?.gankItemList?.observe(viewLifecycleOwner, Observer {
+            (viewBinding.rvGankDaily.adapter as GankDailyAdapter).replaceItems(it)
+        })
+        viewBinding.viewModel?.netWorkError?.observe(viewLifecycleOwner, Observer {
+            Toast.makeText(activity, R.string.network_error, Toast.LENGTH_SHORT).show()
+        })
 
-    override fun showLoadingGankError() {
-        setLoadingIndicator(false)
-        Toast.makeText(context, "showLoadingGankError", Toast.LENGTH_SHORT).show()
+        //load data if empty
+        if (viewBinding.viewModel?.gankItemList?.value.isNullOrEmpty())
+            viewBinding.viewModel?.start()
+
     }
 
     companion object {

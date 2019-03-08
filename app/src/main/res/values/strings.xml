@@ -32,4 +32,5 @@
     </string>
     <string name="open_source">开源库</string>
     <string name="open_source_content">Room:https://developer.android.google.cn/jetpack\nAnko:https://github.com/Kotlin/anko\nGlide:https://github.com/bumptech/glide\nPhotoView:https://github.com/chrisbanes/PhotoView\nGson:https://github.com/google/gson</string>
+    <string name="network_error">请求数据出现错误</string>
 </resources>

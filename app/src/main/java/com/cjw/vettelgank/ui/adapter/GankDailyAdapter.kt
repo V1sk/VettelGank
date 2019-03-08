@@ -11,8 +11,16 @@ import com.cjw.vettelgank.data.ui.GankItem
 import com.cjw.vettelgank.ui.adapter.holder.GankDataHolder
 import kotlinx.android.synthetic.main.recycler_item_gank_header.view.*
 
-class GankDailyAdapter(private val gankItemList: MutableList<GankItem>) :
+class GankDailyAdapter :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+    private val gankItemList: MutableList<GankItem> = mutableListOf()
+
+    fun replaceItems(gankItemList: MutableList<GankItem>) {
+        this.gankItemList.clear()
+        this.gankItemList.addAll(gankItemList)
+        notifyDataSetChanged()
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         when (viewType) {

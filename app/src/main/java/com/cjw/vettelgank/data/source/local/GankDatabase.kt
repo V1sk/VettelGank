@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.cjw.vettelgank.data.GankDailyData
 
-@Database(entities = [GankDailyData::class], version = 1)
+@Database(entities = [GankDailyData::class], version = 1, exportSchema = false)
 @TypeConverters(value = [GankConvert::class])
 abstract class GankDatabase : RoomDatabase() {
 

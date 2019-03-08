@@ -13,8 +13,6 @@ interface GankDailySource {
 
     fun gankDaily(callback: LoadGankCallback)
 
-    fun refreshGank()
-
     fun deleteGankDaily()
 
     fun saveGankDaily(gankDailyData: GankDailyData)

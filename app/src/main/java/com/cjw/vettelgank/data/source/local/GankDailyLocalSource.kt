@@ -22,10 +22,6 @@ class GankDailyLocalSource private constructor(
         }
     }
 
-    override fun refreshGank() {
-
-    }
-
     override fun gankDaily(callback: GankDailySource.LoadGankCallback) {
         appExecutors.diskIO.execute {
             val dailyData = gankDao.loadDaily()

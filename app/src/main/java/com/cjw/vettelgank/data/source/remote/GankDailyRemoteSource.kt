@@ -11,10 +11,6 @@ class GankDailyRemoteSource private constructor() : GankDailySource {
 
     private val tag = "GankDailyRemoteSource"
 
-    override fun refreshGank() {
-
-    }
-
     override fun gankDaily(callback: GankDailySource.LoadGankCallback) {
         doAsync {
             val gankResult = GankDailyRequest().request()

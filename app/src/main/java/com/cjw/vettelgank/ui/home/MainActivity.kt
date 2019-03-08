@@ -11,12 +11,13 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.cjw.vettelgank.Injection
 import com.cjw.vettelgank.R
+import com.cjw.vettelgank.ext.obtainViewModel
 import com.cjw.vettelgank.ext.replaceFragmentInActivity
 import com.cjw.vettelgank.ext.setupToolBar
 import com.cjw.vettelgank.ext.transparentStatusBar
 import com.cjw.vettelgank.ui.home.about.AboutFragment
 import com.cjw.vettelgank.ui.home.daily.GankDailyFragment
-import com.cjw.vettelgank.ui.home.daily.GankDailyPresenter
+import com.cjw.vettelgank.ui.home.daily.GankDailyViewModel
 import com.cjw.vettelgank.ui.home.filter.GankFilterFragment
 import com.cjw.vettelgank.ui.home.filter.GankFilterPresenter
 import com.cjw.vettelgank.ui.home.filter.WelfareFragment
@@ -28,7 +29,6 @@ import kotlinx.android.synthetic.main.nav_header.view.*
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var gankDailyPresenter: GankDailyPresenter
     private lateinit var gankFilterPresenter: GankFilterPresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,15 +40,9 @@ class MainActivity : AppCompatActivity() {
         }
         setupDrawerLayout()
 
-        val gankDailyFragment = GankDailyFragment.newInstance().also {
+        GankDailyFragment.newInstance().also {
             replaceFragmentInActivity(it, R.id.contentFrame, GankDailyFragment.TAG)
         }
-
-        gankDailyPresenter = GankDailyPresenter(
-            Injection.provideGankRepository(
-                applicationContext
-            ), gankDailyFragment
-        )
 
         gankFilterPresenter = GankFilterPresenter(Injection.provideGankFilterRepository(), null)
 
@@ -71,8 +65,6 @@ class MainActivity : AppCompatActivity() {
                 R.id.menu_today -> {
                     if (null == supportFragmentManager.findFragmentByTag(GankDailyFragment.TAG)) {
                         GankDailyFragment.newInstance().also {
-                            gankDailyPresenter.gankDailyView = it
-                            it.presenter = gankDailyPresenter
                             replaceFragmentInActivity(it, R.id.contentFrame, GankDailyFragment.TAG)
                         }
                     }
@@ -163,4 +155,6 @@ class MainActivity : AppCompatActivity() {
 
         return super.onOptionsItemSelected(item)
     }
+
+    fun obtainGankDailyViewModel(): GankDailyViewModel = obtainViewModel(GankDailyViewModel::class.java)
 }
