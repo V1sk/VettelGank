@@ -9,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.cjw.vettelgank.Injection
 import com.cjw.vettelgank.R
 import com.cjw.vettelgank.ext.obtainViewModel
 import com.cjw.vettelgank.ext.replaceFragmentInActivity
@@ -19,7 +18,7 @@ import com.cjw.vettelgank.ui.home.about.AboutFragment
 import com.cjw.vettelgank.ui.home.daily.GankDailyFragment
 import com.cjw.vettelgank.ui.home.daily.GankDailyViewModel
 import com.cjw.vettelgank.ui.home.filter.GankFilterFragment
-import com.cjw.vettelgank.ui.home.filter.GankFilterPresenter
+import com.cjw.vettelgank.ui.home.filter.GankFilterViewModel
 import com.cjw.vettelgank.ui.home.filter.WelfareFragment
 import com.cjw.vettelgank.ui.search.SearchActivity
 import kotlinx.android.synthetic.main.activity_main.*
@@ -28,8 +27,6 @@ import kotlinx.android.synthetic.main.nav_header.view.*
 
 
 class MainActivity : AppCompatActivity() {
-
-    private lateinit var gankFilterPresenter: GankFilterPresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,8 +40,6 @@ class MainActivity : AppCompatActivity() {
         GankDailyFragment.newInstance().also {
             replaceFragmentInActivity(it, R.id.contentFrame, GankDailyFragment.TAG)
         }
-
-        gankFilterPresenter = GankFilterPresenter(Injection.provideGankFilterRepository(), null)
 
     }
 
@@ -91,9 +86,7 @@ class MainActivity : AppCompatActivity() {
                     val welfareFragment = supportFragmentManager.findFragmentByTag(GankFilterType.WELFARE)
                     if (null == welfareFragment) {
                         WelfareFragment.newInstance().also {
-                            gankFilterPresenter.gankFilterView = it
-                            it.presenter = gankFilterPresenter
-                            gankFilterPresenter.currentFiltering = GankFilterType.WELFARE
+                            obtainGankFilterViewModel().currentFiltering = GankFilterType.WELFARE
                             replaceFragmentInActivity(it, R.id.contentFrame, GankFilterType.WELFARE)
                         }
                     }
@@ -119,9 +112,7 @@ class MainActivity : AppCompatActivity() {
         val gankFilterFragment = supportFragmentManager.findFragmentByTag(filterType)
         if (null == gankFilterFragment) {
             GankFilterFragment.newInstance().also {
-                gankFilterPresenter.gankFilterView = it
-                it.presenter = gankFilterPresenter
-                gankFilterPresenter.currentFiltering = filterType
+                obtainGankFilterViewModel().currentFiltering = filterType
                 replaceFragmentInActivity(it, R.id.contentFrame, filterType)
             }
         }
@@ -157,4 +148,5 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun obtainGankDailyViewModel(): GankDailyViewModel = obtainViewModel(GankDailyViewModel::class.java)
+    fun obtainGankFilterViewModel(): GankFilterViewModel = obtainViewModel(GankFilterViewModel::class.java)
 }

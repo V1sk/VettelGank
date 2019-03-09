@@ -6,97 +6,63 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.cjw.vettelgank.R
-import com.cjw.vettelgank.data.Gank
+import com.cjw.vettelgank.databinding.FragmentGankFilterBinding
 import com.cjw.vettelgank.ui.adapter.GankFilterAdapter
 import com.cjw.vettelgank.ui.adapter.LoadMoreListener
-import com.cjw.vettelgank.ui.adapter.holder.LoadingHolder
-import kotlinx.android.synthetic.main.fragment_gank_filter.*
+import com.cjw.vettelgank.ui.home.MainActivity
 
 
-class GankFilterFragment : Fragment(), GankFilterContract.View {
+class GankFilterFragment : Fragment() {
 
-    override lateinit var presenter: GankFilterContract.Presenter
-
-    private lateinit var gankFilterAdapter: GankFilterAdapter
-    private var gankList: MutableList<Gank> = mutableListOf()
+    private lateinit var viewBinding: FragmentGankFilterBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_gank_filter, container, false)
+        viewBinding = FragmentGankFilterBinding.inflate(inflater, container, false).apply {
+            viewModel = (activity as MainActivity).obtainGankFilterViewModel()
+        }
+        return viewBinding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        viewBinding.lifecycleOwner = viewLifecycleOwner
 
-        rv_gank_filter.layoutManager = LinearLayoutManager(activity)
-        rv_gank_filter.setHasFixedSize(true)
-        rv_gank_filter.addItemDecoration(DividerItemDecoration(activity, DividerItemDecoration.VERTICAL))
-        gankFilterAdapter = GankFilterAdapter(gankList)
-        rv_gank_filter.adapter = gankFilterAdapter
-
-        gankFilterAdapter.loadMoreListener = object : LoadMoreListener {
+        viewBinding.rvGankFilter.layoutManager = LinearLayoutManager(activity)
+        viewBinding.rvGankFilter.addItemDecoration(DividerItemDecoration(activity, DividerItemDecoration.VERTICAL))
+        val adapter = GankFilterAdapter(mutableListOf())
+        viewBinding.rvGankFilter.adapter = adapter
+        adapter.loadMoreListener = object : LoadMoreListener {
             override fun loadMore() {
-                presenter.loadMore()
+                viewBinding.viewModel?.loadMore()
             }
         }
 
-        swipe_refresh_layout.setOnRefreshListener {
-            refreshData()
+        val filter = viewBinding.viewModel?.currentFiltering
+
+        viewBinding.viewModel?.data?.observe(viewLifecycleOwner, Observer {
+            if (it != null && it[filter] != null)
+                adapter.replaceItems(it[filter]!!)
+        })
+
+        viewBinding.viewModel?.loadMoreState?.observe(viewLifecycleOwner, Observer {
+            adapter.loadMoreCompleted()
+            if (it != null && it[filter] != null)
+                adapter.loadingStatus = it[filter]!!
+        })
+
+        val data = viewBinding.viewModel?.data?.value
+        if (data == null || data[filter].isNullOrEmpty()) {
+            //delay for animation
+            viewBinding.rvGankFilter.postDelayed({
+                viewBinding.viewModel?.refresh()
+            }, 200)
         }
-
-        rv_gank_filter.post {
-            swipe_refresh_layout.isRefreshing = true
-            refreshData()
-        }
-    }
-
-    private fun refreshCompleted() {
-        rv_gank_filter?.post {
-            swipe_refresh_layout?.isRefreshing = false
-        }
-    }
-
-    private fun refreshData() {
-        presenter.start()
-    }
-
-    override fun onRefresh(gankList: List<Gank>, isEnd: Boolean) {
-        this.gankList.clear()
-        this.gankList.addAll(gankList)
-        isDataEnd(isEnd)
-        gankFilterAdapter.notifyDataSetChanged()
-        refreshCompleted()
-    }
-
-    override fun onLoadMore(gankList: List<Gank>, isEnd: Boolean) {
-        this.gankList.addAll(gankList)
-        gankFilterAdapter.loadMoreCompleted()
-        isDataEnd(isEnd)
-        gankFilterAdapter.notifyDataSetChanged()
-    }
-
-    private fun isDataEnd(isEnd: Boolean) {
-        if (isEnd) {
-            gankFilterAdapter.loadingStatus = LoadingHolder.STATUS_END
-        } else {
-            gankFilterAdapter.loadingStatus = LoadingHolder.STATUS_LOADING
-        }
-    }
-
-    override fun refreshGankError() {
-        refreshCompleted()
-    }
-
-    override fun loadMoreGankError() {
-        gankFilterAdapter.loadMoreCompleted()
-        gankFilterAdapter.loadingStatus = LoadingHolder.STATUS_FAILED
-        gankFilterAdapter.notifyDataSetChanged()
     }
 
     companion object {

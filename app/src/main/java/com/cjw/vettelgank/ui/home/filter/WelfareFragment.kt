@@ -6,93 +6,64 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
-import com.cjw.vettelgank.R
-import com.cjw.vettelgank.data.Gank
+import com.cjw.vettelgank.databinding.FragmentWelfareBinding
 import com.cjw.vettelgank.ui.adapter.LoadMoreListener
 import com.cjw.vettelgank.ui.adapter.WelfareAdapter
-import com.cjw.vettelgank.ui.adapter.holder.LoadingHolder
-import kotlinx.android.synthetic.main.fragment_welfare.*
+import com.cjw.vettelgank.ui.home.MainActivity
 
 
-class WelfareFragment : Fragment(), GankFilterContract.View {
+class WelfareFragment : Fragment() {
 
-    override lateinit var presenter: GankFilterContract.Presenter
-
-    private var gankList: MutableList<Gank> = mutableListOf()
-    private lateinit var welfareAdapter: WelfareAdapter
+    private lateinit var viewBinding: FragmentWelfareBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_welfare, container, false)
+        viewBinding = FragmentWelfareBinding.inflate(inflater, container, false).apply {
+            viewModel = (activity as MainActivity).obtainGankFilterViewModel()
+        }
+        return viewBinding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        rv_welfare.layoutManager = GridLayoutManager(context,2)
-        rv_welfare.setHasFixedSize(true)
-        welfareAdapter = WelfareAdapter(gankList)
-        rv_welfare.adapter = welfareAdapter
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        viewBinding.lifecycleOwner = viewLifecycleOwner
 
-        welfareAdapter.loadMoreListener = object : LoadMoreListener {
+        viewBinding.rvWelfare.layoutManager = GridLayoutManager(activity, 2)
+        viewBinding.rvWelfare.addItemDecoration(DividerItemDecoration(activity, DividerItemDecoration.VERTICAL))
+        val adapter = WelfareAdapter(mutableListOf())
+        viewBinding.rvWelfare.adapter = adapter
+        adapter.loadMoreListener = object : LoadMoreListener {
             override fun loadMore() {
-                presenter.loadMore()
+                viewBinding.viewModel?.loadMore()
             }
         }
 
-        swipe_refresh_layout.setOnRefreshListener {
-            presenter.refresh()
-        }
+        val filter = viewBinding.viewModel?.currentFiltering
 
-        rv_welfare.post {
-            swipe_refresh_layout.isRefreshing = true
-            presenter.start()
-        }
+        viewBinding.viewModel?.data?.observe(viewLifecycleOwner, Observer {
+            if (it != null && it[filter] != null)
+                adapter.replaceItems(it[filter]!!)
+        })
 
-    }
+        viewBinding.viewModel?.loadMoreState?.observe(viewLifecycleOwner, Observer {
+            adapter.loadMoreCompleted()
+            if (it != null && it[filter] != null)
+                adapter.loadingStatus = it[filter]!!
+        })
 
-    private fun refreshCompleted() {
-        rv_welfare?.post {
-            swipe_refresh_layout?.isRefreshing = false
-        }
-    }
-
-    override fun onRefresh(gankList: List<Gank>, isEnd: Boolean) {
-        this.gankList.clear()
-        this.gankList.addAll(gankList)
-        isDataEnd(isEnd)
-        welfareAdapter.notifyDataSetChanged()
-        refreshCompleted()
-    }
-
-    override fun onLoadMore(gankList: List<Gank>, isEnd: Boolean) {
-        this.gankList.addAll(gankList)
-        welfareAdapter.loadMoreCompleted()
-        isDataEnd(isEnd)
-        welfareAdapter.notifyDataSetChanged()
-    }
-
-    override fun refreshGankError() {
-        refreshCompleted()
-    }
-
-    override fun loadMoreGankError() {
-        welfareAdapter.loadMoreCompleted()
-        welfareAdapter.loadingStatus = LoadingHolder.STATUS_FAILED
-        welfareAdapter.notifyDataSetChanged()
-    }
-
-    private fun isDataEnd(isEnd: Boolean) {
-        if (isEnd) {
-            welfareAdapter.loadingStatus = LoadingHolder.STATUS_END
-        } else {
-            welfareAdapter.loadingStatus = LoadingHolder.STATUS_LOADING
+        val data = viewBinding.viewModel?.data?.value
+        if (data == null || data[filter].isNullOrEmpty()) {
+            //delay for animation
+            viewBinding.rvWelfare.postDelayed({
+                viewBinding.viewModel?.refresh()
+            }, 200)
         }
     }
-
 
     companion object {
         @JvmStatic

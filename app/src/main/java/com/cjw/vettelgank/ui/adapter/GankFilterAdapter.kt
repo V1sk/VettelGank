@@ -8,9 +8,15 @@ import com.cjw.vettelgank.ui.common.WebActivity
 import kotlinx.android.synthetic.main.recycler_item_gank_data.view.*
 
 class GankFilterAdapter(
-    gankList: MutableList<Gank>
+    private val gankList: MutableList<Gank>
 ) :
     BaseAdapter<Gank>(gankList, R.layout.recycler_item_gank_data) {
+
+    fun replaceItems(gankList: MutableList<Gank>) {
+        this.gankList.clear()
+        this.gankList.addAll(gankList)
+        notifyDataSetChanged()
+    }
 
     private val onClickListener = View.OnClickListener {
         val gank = it.tag as Gank

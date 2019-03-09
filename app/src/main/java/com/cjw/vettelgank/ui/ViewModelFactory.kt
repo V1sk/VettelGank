@@ -1,13 +1,13 @@
 package com.cjw.vettelgank.ui
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.cjw.vettelgank.Injection
 import com.cjw.vettelgank.data.source.GankDailyRepository
 import com.cjw.vettelgank.data.source.GankFilterRepository
 import com.cjw.vettelgank.ui.home.daily.GankDailyViewModel
+import com.cjw.vettelgank.ui.home.filter.GankFilterViewModel
 
 class ViewModelFactory private constructor(
     private val gankDailyRepository: GankDailyRepository,
@@ -18,9 +18,11 @@ class ViewModelFactory private constructor(
     override fun <T : ViewModel?> create(modelClass: Class<T>): T =
         with(modelClass) {
             when {
-                isAssignableFrom(GankDailyViewModel::class.java) ->{
-                    Log.i("GankDailyFragment", "GankDailyViewModel create")
+                isAssignableFrom(GankDailyViewModel::class.java) -> {
                     GankDailyViewModel(gankDailyRepository)
+                }
+                isAssignableFrom(GankFilterViewModel::class.java) -> {
+                    GankFilterViewModel(gankFilterRepository)
                 }
                 else ->
                     throw IllegalArgumentException("Unknown ViewModel: ${modelClass.name}")
