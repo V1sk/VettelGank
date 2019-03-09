@@ -6,12 +6,15 @@ import androidx.lifecycle.ViewModelProvider
 import com.cjw.vettelgank.Injection
 import com.cjw.vettelgank.data.source.GankDailyRepository
 import com.cjw.vettelgank.data.source.GankFilterRepository
+import com.cjw.vettelgank.data.source.SearchRepository
 import com.cjw.vettelgank.ui.home.daily.GankDailyViewModel
 import com.cjw.vettelgank.ui.home.filter.GankFilterViewModel
+import com.cjw.vettelgank.ui.search.SearchViewModel
 
 class ViewModelFactory private constructor(
     private val gankDailyRepository: GankDailyRepository,
-    private val gankFilterRepository: GankFilterRepository
+    private val gankFilterRepository: GankFilterRepository,
+    private val searchRepository: SearchRepository
 ) : ViewModelProvider.NewInstanceFactory() {
 
     @Suppress("UNCHECKED_CAST")
@@ -23,6 +26,9 @@ class ViewModelFactory private constructor(
                 }
                 isAssignableFrom(GankFilterViewModel::class.java) -> {
                     GankFilterViewModel(gankFilterRepository)
+                }
+                isAssignableFrom(SearchViewModel::class.java) -> {
+                    SearchViewModel(searchRepository)
                 }
                 else ->
                     throw IllegalArgumentException("Unknown ViewModel: ${modelClass.name}")
@@ -38,7 +44,8 @@ class ViewModelFactory private constructor(
             INSTANCE ?: synchronized(ViewModelFactory::class.java) {
                 INSTANCE ?: ViewModelFactory(
                     Injection.provideGankRepository(application),
-                    Injection.provideGankFilterRepository()
+                    Injection.provideGankFilterRepository(),
+                    Injection.provideSearchRepository()
                 )
             }
     }

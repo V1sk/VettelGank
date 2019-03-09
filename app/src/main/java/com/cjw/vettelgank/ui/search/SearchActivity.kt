@@ -8,23 +8,24 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.cjw.vettelgank.Injection
-import com.cjw.vettelgank.data.Gank
+import com.cjw.vettelgank.R
+import com.cjw.vettelgank.databinding.ActivitySearchBinding
 import com.cjw.vettelgank.ext.hideKeyboard
+import com.cjw.vettelgank.ext.obtainViewModel
 import com.cjw.vettelgank.ui.adapter.GankFilterAdapter
 import com.cjw.vettelgank.ui.adapter.LoadMoreListener
-import com.cjw.vettelgank.ui.adapter.holder.LoadingHolder
 import kotlinx.android.synthetic.main.activity_search.*
 
 
-class SearchActivity : AppCompatActivity(), View.OnClickListener, SearchContract.View {
+class SearchActivity : AppCompatActivity(), View.OnClickListener {
 
-    override lateinit var presenter: SearchContract.Presenter
 
-    private lateinit var gankFilterAdapter: GankFilterAdapter
-    private var gankList: MutableList<Gank> = mutableListOf()
+    private lateinit var viewBinding: ActivitySearchBinding
+    private lateinit var viewModel: SearchViewModel
 
     companion object {
 
@@ -37,35 +38,52 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener, SearchContract
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(com.cjw.vettelgank.R.layout.activity_search)
 
-        presenter = SearchPresenter(Injection.provideSearchRepository(), this)
+        viewBinding = DataBindingUtil.setContentView(this, R.layout.activity_search)
+        viewModel = obtainViewModel(SearchViewModel::class.java)
+        viewBinding.viewModel = viewModel
 
-        rv_search_result.layoutManager = LinearLayoutManager(this)
-        rv_search_result.setHasFixedSize(true)
-        rv_search_result.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
-        gankFilterAdapter = GankFilterAdapter(gankList)
-        rv_search_result.adapter = gankFilterAdapter
+        val adapter = GankFilterAdapter(mutableListOf())
+        viewBinding.rvSearchResult.layoutManager = LinearLayoutManager(this)
+        viewBinding.rvSearchResult.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
+        viewBinding.rvSearchResult.adapter = adapter
+        adapter.loadMoreListener = loadMoreListener
 
-        gankFilterAdapter.loadMoreListener = object : LoadMoreListener {
-            override fun loadMore() {
-                presenter.loadMoreSearch()
+        viewModel.data.observe(this, Observer {
+            if (!it.isNullOrEmpty())
+                adapter.replaceItems(it)
+        })
+
+        viewModel.loadMoreState.observe(this, Observer {
+            adapter.loadMoreCompleted()
+            adapter.loadingStatus = it
+        })
+
+        viewModel.netWorkError.observe(this, Observer {
+            Toast.makeText(this, R.string.network_error, Toast.LENGTH_SHORT).show()
+        })
+
+        viewModel.refreshing.observe(this, Observer {
+            viewBinding.rvSearchResult.post {
+                viewBinding.swipeRefreshLayout.isRefreshing = it
             }
-        }
+        })
 
-        swipe_refresh_layout.setOnRefreshListener {
-            presenter.refreshSearch()
-        }
+        viewBinding.btnClose.setOnClickListener(this)
+        viewBinding.btnSearch.setOnClickListener(this)
 
-        btn_close.setOnClickListener(this)
-        btn_search.setOnClickListener(this)
-
-        edt_search_box.setOnEditorActionListener { _, actionId, _ ->
+        viewBinding.edtSearchBox.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 refresh()
                 return@setOnEditorActionListener true
             }
             false
+        }
+    }
+
+    private val loadMoreListener = object : LoadMoreListener {
+        override fun loadMore() {
+            viewModel.loadMore()
         }
     }
 
@@ -75,61 +93,20 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener, SearchContract
             Toast.makeText(this, com.cjw.vettelgank.R.string.search_content_empty, Toast.LENGTH_SHORT).show()
             return
         }
-        rv_search_result.post {
-            swipe_refresh_layout.isRefreshing = true
-            hideKeyboard()
-            presenter.queryText = text
-        }
+        hideKeyboard()
+        viewModel.queryText = text
     }
 
     override fun onClick(v: View?) {
         when (v?.id) {
-            com.cjw.vettelgank.R.id.btn_close -> {
+            R.id.btn_close -> {
                 finish()
             }
-            com.cjw.vettelgank.R.id.btn_search -> {
+            R.id.btn_search -> {
                 refresh()
             }
         }
     }
 
-    private fun refreshCompleted() {
-        rv_search_result?.post {
-            swipe_refresh_layout?.isRefreshing = false
-        }
-    }
-
-    private fun isDataEnd(isEnd: Boolean) {
-        if (isEnd) {
-            gankFilterAdapter.loadingStatus = LoadingHolder.STATUS_END
-        } else {
-            gankFilterAdapter.loadingStatus = LoadingHolder.STATUS_LOADING
-        }
-    }
-
-    override fun onRefreshSearchResult(gankList: List<Gank>, isEnd: Boolean) {
-        refreshCompleted()
-        this.gankList.clear()
-        this.gankList.addAll(gankList)
-        isDataEnd(isEnd)
-        gankFilterAdapter.notifyDataSetChanged()
-    }
-
-    override fun onLoadMoreSearchResult(gankList: List<Gank>, isEnd: Boolean) {
-        this.gankList.addAll(gankList)
-        gankFilterAdapter.loadMoreCompleted()
-        isDataEnd(isEnd)
-        gankFilterAdapter.notifyDataSetChanged()
-    }
-
-    override fun refreshError() {
-        refreshCompleted()
-    }
-
-    override fun loadMoreError() {
-        gankFilterAdapter.loadMoreCompleted()
-        gankFilterAdapter.loadingStatus = LoadingHolder.STATUS_FAILED
-        gankFilterAdapter.notifyDataSetChanged()
-    }
 
 }

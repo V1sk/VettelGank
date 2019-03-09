@@ -5,10 +5,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.cjw.vettelgank.R
 import com.cjw.vettelgank.databinding.FragmentGankFilterBinding
 import com.cjw.vettelgank.ui.adapter.GankFilterAdapter
 import com.cjw.vettelgank.ui.adapter.LoadMoreListener
@@ -33,6 +35,7 @@ class GankFilterFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         viewBinding.lifecycleOwner = viewLifecycleOwner
 
+        // init recycler view
         viewBinding.rvGankFilter.layoutManager = LinearLayoutManager(activity)
         viewBinding.rvGankFilter.addItemDecoration(DividerItemDecoration(activity, DividerItemDecoration.VERTICAL))
         val adapter = GankFilterAdapter(mutableListOf())
@@ -45,17 +48,21 @@ class GankFilterFragment : Fragment() {
 
         val filter = viewBinding.viewModel?.currentFiltering
 
+        // add observer
         viewBinding.viewModel?.data?.observe(viewLifecycleOwner, Observer {
             if (it != null && it[filter] != null)
                 adapter.replaceItems(it[filter]!!)
         })
-
         viewBinding.viewModel?.loadMoreState?.observe(viewLifecycleOwner, Observer {
             adapter.loadMoreCompleted()
             if (it != null && it[filter] != null)
                 adapter.loadingStatus = it[filter]!!
         })
+        viewBinding.viewModel?.netWorkError?.observe(viewLifecycleOwner, Observer {
+            Toast.makeText(activity, R.string.network_error, Toast.LENGTH_SHORT).show()
+        })
 
+        // request data if empty
         val data = viewBinding.viewModel?.data?.value
         if (data == null || data[filter].isNullOrEmpty()) {
             //delay for animation

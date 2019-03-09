@@ -27,7 +27,7 @@ class GankDateDeserializer(vararg dateFormatPatterns: String) : JsonDeserializer
             try {
                 return dateFormat.parse(json.asString)
             } catch (e: ParseException) {
-                e.printStackTrace()
+
             }
         }
         return null
