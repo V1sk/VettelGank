@@ -34,35 +34,36 @@ class SearchViewModel(private val searchRepository: SearchRepository) : ViewMode
 
     fun refresh() {
         _refreshing.value = true
-        searchRepository.refreshSearch(queryText, object : SearchSource.SearchCallback {
-            override fun onSearchLoaded(gankList: List<Gank>, isEnd: Boolean) {
-                _refreshing.value = false
-                _data.value = gankList.toMutableList()
-                _loadMoreState.value = if (isEnd) LoadingHolder.STATUS_END else LoadingHolder.STATUS_LOADING
-            }
-
-            override fun onDataNotAvailable() {
-                _refreshing.value = false
-            }
-
-        })
+        searchRepository.refreshSearch(queryText, refreshCallback)
     }
 
     fun loadMore() {
-        searchRepository.loadMoreSearch(queryText, object : SearchSource.SearchCallback {
+        searchRepository.loadMoreSearch(queryText, loadMoreCallback)
+    }
 
-            override fun onSearchLoaded(gankList: List<Gank>, isEnd: Boolean) {
-                val list = _data.value ?: mutableListOf()
-                list.addAll(gankList)
-                _data.value = list
-                _loadMoreState.value = if (isEnd) LoadingHolder.STATUS_END else LoadingHolder.STATUS_LOADING
-            }
+    private val refreshCallback = object : SearchSource.SearchCallback {
+        override fun onSearchLoaded(gankList: List<Gank>, isEnd: Boolean) {
+            _refreshing.value = false
+            _data.value = gankList.toMutableList()
+            _loadMoreState.value = if (isEnd) LoadingHolder.STATUS_END else LoadingHolder.STATUS_LOADING
+        }
 
-            override fun onDataNotAvailable() {
-                _loadMoreState.value = LoadingHolder.STATUS_FAILED
-            }
+        override fun onDataNotAvailable() {
+            _refreshing.value = false
+        }
+    }
 
-        })
+    private val loadMoreCallback = object : SearchSource.SearchCallback {
+        override fun onSearchLoaded(gankList: List<Gank>, isEnd: Boolean) {
+            val list = _data.value ?: mutableListOf()
+            list.addAll(gankList)
+            _data.value = list
+            _loadMoreState.value = if (isEnd) LoadingHolder.STATUS_END else LoadingHolder.STATUS_LOADING
+        }
+
+        override fun onDataNotAvailable() {
+            _loadMoreState.value = LoadingHolder.STATUS_FAILED
+        }
     }
 
 }

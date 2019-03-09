@@ -24,10 +24,6 @@ class GankDailyViewModel(private val gankDailyRepository: GankDailyRepository) :
 
 
     fun start() {
-        gankDaily()
-    }
-
-    private fun gankDaily() {
         _refreshing.value = true
         gankDailyRepository.gankDaily(dataSourceCallback)
 

@@ -31,38 +31,42 @@ class GankFilterViewModel(private val gankFilterRepository: GankFilterRepository
 
     fun refresh() {
         _refreshing.value = true
-        gankFilterRepository.refreshGankList(currentFiltering, object : GankFilterSource.LoadGankFilterCallback {
-            override fun onGankFilterLoaded(gankList: List<Gank>, isEnd: Boolean) {
-                _refreshing.value = false
-                val map = _data.value ?: mutableMapOf()
-                map[currentFiltering] = gankList.toMutableList()
-                _data.value = map
-
-                setLoadMoreState(if (isEnd) LoadingHolder.STATUS_END else LoadingHolder.STATUS_LOADING)
-            }
-
-            override fun onDataNotAvailable() {
-                _refreshing.value = false
-                _netWorkError.value = true
-            }
-        })
+        gankFilterRepository.refreshGankList(currentFiltering, onRefreshCallback)
     }
 
     fun loadMore() {
-        gankFilterRepository.loadMoreGankList(currentFiltering, object : GankFilterSource.LoadGankFilterCallback {
+        gankFilterRepository.loadMoreGankList(currentFiltering, loadMoreCallback)
+    }
 
-            override fun onGankFilterLoaded(gankList: List<Gank>, isEnd: Boolean) {
-                val map = _data.value
-                map!![currentFiltering]?.addAll(gankList)
-                _data.value = map
-                setLoadMoreState(if (isEnd) LoadingHolder.STATUS_END else LoadingHolder.STATUS_LOADING)
-            }
+    private val onRefreshCallback = object : GankFilterSource.LoadGankFilterCallback {
+        override fun onGankFilterLoaded(gankList: List<Gank>, isEnd: Boolean) {
+            _refreshing.value = false
+            val map = _data.value ?: mutableMapOf()
+            map[currentFiltering] = gankList.toMutableList()
+            _data.value = map
 
-            override fun onDataNotAvailable() {
-                setLoadMoreState(LoadingHolder.STATUS_FAILED)
-            }
+            setLoadMoreState(if (isEnd) LoadingHolder.STATUS_END else LoadingHolder.STATUS_LOADING)
+        }
 
-        })
+        override fun onDataNotAvailable() {
+            _refreshing.value = false
+            _netWorkError.value = true
+        }
+    }
+
+    private val loadMoreCallback = object : GankFilterSource.LoadGankFilterCallback {
+
+        override fun onGankFilterLoaded(gankList: List<Gank>, isEnd: Boolean) {
+            val map = _data.value
+            map!![currentFiltering]?.addAll(gankList)
+            _data.value = map
+            setLoadMoreState(if (isEnd) LoadingHolder.STATUS_END else LoadingHolder.STATUS_LOADING)
+        }
+
+        override fun onDataNotAvailable() {
+            setLoadMoreState(LoadingHolder.STATUS_FAILED)
+        }
+
     }
 
     private fun setLoadMoreState(state: Int) {
