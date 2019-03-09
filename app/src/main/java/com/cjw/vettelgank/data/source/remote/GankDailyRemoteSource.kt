@@ -1,33 +1,36 @@
 package com.cjw.vettelgank.data.source.remote
 
-import android.util.Log
 import com.cjw.vettelgank.data.GankDailyData
+import com.cjw.vettelgank.data.GankDailyResult
+import com.cjw.vettelgank.data.api.RetrofitClient
 import com.cjw.vettelgank.data.source.GankDailySource
-import com.cjw.vettelgank.data.source.request.GankDailyRequest
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.uiThread
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class GankDailyRemoteSource private constructor() : GankDailySource {
 
-    private val tag = "GankDailyRemoteSource"
-
     override fun gankDaily(callback: GankDailySource.LoadGankCallback) {
-        doAsync {
-            val gankResult = GankDailyRequest().request()
-            Log.i(tag, "$gankResult")
-            uiThread {
-                if (gankResult == null) {
-                    callback.onDataNotAvailable()
-                } else {
-                    if (gankResult.error) {
+
+        RetrofitClient.getInstance().gankDaily().enqueue(object : Callback<GankDailyResult> {
+            override fun onFailure(call: Call<GankDailyResult>, t: Throwable) {
+                callback.onDataNotAvailable()
+            }
+
+            override fun onResponse(call: Call<GankDailyResult>, response: Response<GankDailyResult>) {
+                if (response.isSuccessful) {
+                    val gankDailyResult = response.body()
+                    if (gankDailyResult == null || gankDailyResult.error) {
                         callback.onDataNotAvailable()
                     } else {
-                        callback.onGankLoaded(gankResult.results)
+                        callback.onGankLoaded(gankDailyResult.results)
                     }
+                } else {
+                    callback.onDataNotAvailable()
                 }
             }
 
-        }
+        })
     }
 
     override fun deleteGankDaily() {

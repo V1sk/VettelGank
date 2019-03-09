@@ -1,28 +1,35 @@
 package com.cjw.vettelgank.data.source.remote
 
+import com.cjw.vettelgank.data.GankFilterResult
+import com.cjw.vettelgank.data.api.RetrofitClient
 import com.cjw.vettelgank.data.source.GankFilterSource
-import com.cjw.vettelgank.data.source.request.GankFilterRequest
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.uiThread
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class GankFilterRemoteSource : GankFilterSource {
 
     override fun gankFilter(filter: String, page: Int, count: Int, callback: GankFilterSource.LoadGankFilterCallback) {
-        doAsync {
-            val gankFilterResult = GankFilterRequest(filter, page, count).request()
-            uiThread {
-                if (gankFilterResult == null) {
-                    callback.onDataNotAvailable()
-                    return@uiThread
-                }
 
-                if (gankFilterResult.error) {
-                    callback.onDataNotAvailable()
+        RetrofitClient.getInstance().gankFilter(filter, count, page).enqueue(object : Callback<GankFilterResult> {
+            override fun onFailure(call: Call<GankFilterResult>, t: Throwable) {
+                callback.onDataNotAvailable()
+            }
+
+            override fun onResponse(call: Call<GankFilterResult>, response: Response<GankFilterResult>) {
+                if (response.isSuccessful) {
+                    val filterResult = response.body()
+                    if (filterResult == null || filterResult.error) {
+                        callback.onDataNotAvailable()
+                    } else {
+                        callback.onGankFilterLoaded(filterResult.results, filterResult.results.size < count)
+                    }
                 } else {
-                    callback.onGankFilterLoaded(gankFilterResult.results, gankFilterResult.results.size < count)
+                    callback.onDataNotAvailable()
                 }
             }
-        }
+
+        })
     }
 
     override fun refreshGankList(currentFiltering: String, callback: GankFilterSource.LoadGankFilterCallback) {
