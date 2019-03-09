@@ -47,6 +47,12 @@ abstract class BaseAdapter<T>(
         loadingMore = false
     }
 
+    fun replaceItems(list: MutableList<T>) {
+        this.dataList.clear()
+        this.dataList.addAll(list)
+        notifyDataSetChanged()
+    }
+
     var loadMoreListener: LoadMoreListener? = null
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {

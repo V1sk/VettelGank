@@ -13,12 +13,6 @@ class WelfareAdapter(
 ) :
     BaseAdapter<Gank>(gankList, R.layout.recycler_item_welfare) {
 
-    fun replaceItems(gankList: MutableList<Gank>) {
-        this.gankList.clear()
-        this.gankList.addAll(gankList)
-        notifyDataSetChanged()
-    }
-
     private val onclickListener = View.OnClickListener {
         val gank = it.tag as Gank
         val position = gankList.indexOf(gank)
