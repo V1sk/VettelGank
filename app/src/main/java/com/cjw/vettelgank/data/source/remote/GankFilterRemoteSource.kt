@@ -1,17 +1,20 @@
 package com.cjw.vettelgank.data.source.remote
 
+import com.cjw.vettelgank.Injection
 import com.cjw.vettelgank.data.GankFilterResult
-import com.cjw.vettelgank.data.api.RetrofitClient
+import com.cjw.vettelgank.data.api.GankService
 import com.cjw.vettelgank.data.source.GankFilterSource
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class GankFilterRemoteSource : GankFilterSource {
+class GankFilterRemoteSource private constructor(
+    private val gankService: GankService = Injection.provideGankService()
+): GankFilterSource {
 
     override fun gankFilter(filter: String, page: Int, count: Int, callback: GankFilterSource.LoadGankFilterCallback) {
 
-        RetrofitClient.getInstance().gankFilter(filter, count, page).enqueue(object : Callback<GankFilterResult> {
+        gankService.gankFilter(filter, count, page).enqueue(object : Callback<GankFilterResult> {
             override fun onFailure(call: Call<GankFilterResult>, t: Throwable) {
                 callback.onDataNotAvailable()
             }

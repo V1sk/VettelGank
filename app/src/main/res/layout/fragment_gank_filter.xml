@@ -12,8 +12,7 @@
             android:id="@+id/swipe_refresh_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:onRefreshListener="@{() -> viewModel.refresh()}"
-            app:refreshing="@{viewModel.refreshing}">
+            app:onRefreshListener="@{() -> viewModel.refresh()}">
 
         <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_gank_filter"

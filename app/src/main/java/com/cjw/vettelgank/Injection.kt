@@ -1,6 +1,9 @@
 package com.cjw.vettelgank
 
 import android.content.Context
+import com.cjw.vettelgank.data.api.GankService
+import com.cjw.vettelgank.data.api.RetrofitClient
+import com.cjw.vettelgank.data.paging.GankPagingRepository
 import com.cjw.vettelgank.data.source.GankDailyRepository
 import com.cjw.vettelgank.data.source.GankFilterRepository
 import com.cjw.vettelgank.data.source.SearchRepository
@@ -28,7 +31,15 @@ object Injection {
         )
     }
 
+    fun provideGankPagingRepository(): GankPagingRepository {
+        return GankPagingRepository.getInstance()
+    }
+
     fun provideSearchRepository(): SearchRepository {
         return SearchRepository(SearchRemoteSource.getInstance())
+    }
+
+    fun provideGankService(): GankService {
+        return RetrofitClient.INSTANCE
     }
 }

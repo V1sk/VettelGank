@@ -1,18 +1,21 @@
 package com.cjw.vettelgank.data.source.remote
 
+import com.cjw.vettelgank.Injection
 import com.cjw.vettelgank.data.GankDailyData
 import com.cjw.vettelgank.data.GankDailyResult
-import com.cjw.vettelgank.data.api.RetrofitClient
+import com.cjw.vettelgank.data.api.GankService
 import com.cjw.vettelgank.data.source.GankDailySource
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class GankDailyRemoteSource private constructor() : GankDailySource {
+class GankDailyRemoteSource private constructor(
+    private val gankService: GankService = Injection.provideGankService()
+) : GankDailySource {
 
     override fun gankDaily(callback: GankDailySource.LoadGankCallback) {
 
-        RetrofitClient.getInstance().gankDaily().enqueue(object : Callback<GankDailyResult> {
+        gankService.gankDaily().enqueue(object : Callback<GankDailyResult> {
             override fun onFailure(call: Call<GankDailyResult>, t: Throwable) {
                 callback.onDataNotAvailable()
             }

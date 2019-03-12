@@ -4,8 +4,8 @@ import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.cjw.vettelgank.Injection
+import com.cjw.vettelgank.data.paging.GankPagingRepository
 import com.cjw.vettelgank.data.source.GankDailyRepository
-import com.cjw.vettelgank.data.source.GankFilterRepository
 import com.cjw.vettelgank.data.source.SearchRepository
 import com.cjw.vettelgank.ui.home.daily.GankDailyViewModel
 import com.cjw.vettelgank.ui.home.filter.GankFilterViewModel
@@ -13,7 +13,7 @@ import com.cjw.vettelgank.ui.search.SearchViewModel
 
 class ViewModelFactory private constructor(
     private val gankDailyRepository: GankDailyRepository,
-    private val gankFilterRepository: GankFilterRepository,
+    private val gankPagingRepository: GankPagingRepository,
     private val searchRepository: SearchRepository
 ) : ViewModelProvider.NewInstanceFactory() {
 
@@ -25,7 +25,7 @@ class ViewModelFactory private constructor(
                     GankDailyViewModel(gankDailyRepository)
                 }
                 isAssignableFrom(GankFilterViewModel::class.java) -> {
-                    GankFilterViewModel(gankFilterRepository)
+                    GankFilterViewModel(gankPagingRepository)
                 }
                 isAssignableFrom(SearchViewModel::class.java) -> {
                     SearchViewModel(searchRepository)
@@ -44,7 +44,7 @@ class ViewModelFactory private constructor(
             INSTANCE ?: synchronized(ViewModelFactory::class.java) {
                 INSTANCE ?: ViewModelFactory(
                     Injection.provideGankRepository(application),
-                    Injection.provideGankFilterRepository(),
+                    Injection.provideGankPagingRepository(),
                     Injection.provideSearchRepository()
                 )
             }

@@ -1,11 +1,11 @@
 package com.cjw.vettelgank.ui.home.filter
 
 
+import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cjw.vettelgank.data.Gank
-import com.cjw.vettelgank.ui.adapter.BaseAdapter
-import com.cjw.vettelgank.ui.adapter.WelfareAdapter
+import com.cjw.vettelgank.ui.adapter.WelfarePagedAdapter
 
 // 福利
 class WelfareFragment : BaseFilterFragment() {
@@ -17,8 +17,10 @@ class WelfareFragment : BaseFilterFragment() {
         return null
     }
 
-    override fun getAdapter(): BaseAdapter<Gank> {
-        return WelfareAdapter(mutableListOf())
+    override fun getAdapter(): PagedListAdapter<Gank, RecyclerView.ViewHolder> {
+        return WelfarePagedAdapter {
+            viewBinding.viewModel?.retry()
+        }
     }
 
     companion object {

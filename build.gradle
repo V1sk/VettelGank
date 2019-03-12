@@ -7,6 +7,7 @@ buildscript {
     ext.room_version = '2.0.0'
     ext.retrofitVersion = "2.3.0"
     ext.okhttpLoggingInterceptorVersion = "3.9.0"
+    ext.pagingVersion = "2.1.0"
 
     repositories {
         mavenCentral()

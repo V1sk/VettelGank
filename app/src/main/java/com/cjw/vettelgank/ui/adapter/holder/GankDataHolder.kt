@@ -1,7 +1,10 @@
 package com.cjw.vettelgank.ui.adapter.holder
 
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.cjw.vettelgank.R
 import com.cjw.vettelgank.data.Gank
 import com.cjw.vettelgank.ext.getDateString
 import com.cjw.vettelgank.ui.common.WebActivity
@@ -20,5 +23,13 @@ class GankDataHolder constructor(itemView: View) : RecyclerView.ViewHolder(itemV
         itemView.tv_date.text = gank.publishedAt.getDateString()
         itemView.item_wrapper.tag = gank
         itemView.item_wrapper.setOnClickListener(onClickListener)
+    }
+
+    companion object {
+        fun create(parent: ViewGroup): GankDataHolder {
+            val view = LayoutInflater.from(parent.context)
+                .inflate(R.layout.recycler_item_gank_data, parent, false)
+            return GankDataHolder(view)
+        }
     }
 }

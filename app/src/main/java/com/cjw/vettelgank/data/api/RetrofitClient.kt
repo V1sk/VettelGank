@@ -16,14 +16,7 @@ object RetrofitClient {
     private const val DATE_PATTERN_2 = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
     private const val DATE_PATTERN_3 = "yyyy-MM-dd'T'HH:mm:ss"
 
-    private var INSTANCE: GankService? = null
-
-    @JvmStatic
-    fun getInstance(): GankService {
-        return INSTANCE ?: create().apply {
-            INSTANCE = this
-        }
-    }
+    val INSTANCE: GankService = create()
 
     private fun create(): GankService {
         val logger = HttpLoggingInterceptor()

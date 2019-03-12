@@ -86,7 +86,7 @@ class MainActivity : AppCompatActivity() {
                     val welfareFragment = supportFragmentManager.findFragmentByTag(GankFilterType.WELFARE)
                     if (null == welfareFragment) {
                         WelfareFragment.newInstance().also {
-                            obtainGankFilterViewModel().currentFiltering = GankFilterType.WELFARE
+                            obtainGankFilterViewModel().filter(GankFilterType.WELFARE)
                             replaceFragmentInActivity(it, R.id.contentFrame, GankFilterType.WELFARE)
                         }
                     }
@@ -112,7 +112,7 @@ class MainActivity : AppCompatActivity() {
         val gankFilterFragment = supportFragmentManager.findFragmentByTag(filterType)
         if (null == gankFilterFragment) {
             GankFilterFragment.newInstance().also {
-                obtainGankFilterViewModel().currentFiltering = filterType
+                obtainGankFilterViewModel().filter(filterType)
                 replaceFragmentInActivity(it, R.id.contentFrame, filterType)
             }
         }
