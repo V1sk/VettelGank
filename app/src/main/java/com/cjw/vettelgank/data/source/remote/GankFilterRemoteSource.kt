@@ -11,7 +11,7 @@ class GankFilterRemoteSource : GankFilterSource {
 
     override fun gankFilter(filter: String, page: Int, count: Int, callback: GankFilterSource.LoadGankFilterCallback) {
 
-        RetrofitClient.getInstance().gankFilter(filter, count, page).enqueue(object : Callback<GankFilterResult> {
+        RetrofitClient.INSTANCE.gankFilter(filter, count, page).enqueue(object : Callback<GankFilterResult> {
             override fun onFailure(call: Call<GankFilterResult>, t: Throwable) {
                 callback.onDataNotAvailable()
             }

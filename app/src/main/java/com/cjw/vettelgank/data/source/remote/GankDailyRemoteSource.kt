@@ -12,7 +12,7 @@ class GankDailyRemoteSource private constructor() : GankDailySource {
 
     override fun gankDaily(callback: GankDailySource.LoadGankCallback) {
 
-        RetrofitClient.getInstance().gankDaily().enqueue(object : Callback<GankDailyResult> {
+        RetrofitClient.INSTANCE.gankDaily().enqueue(object : Callback<GankDailyResult> {
             override fun onFailure(call: Call<GankDailyResult>, t: Throwable) {
                 callback.onDataNotAvailable()
             }

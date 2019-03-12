@@ -11,7 +11,7 @@ class SearchRemoteSource : SearchSource.Remote {
 
     override fun search(queryText: String, page: Int, count: Int, callback: SearchSource.SearchCallback) {
 
-        RetrofitClient.getInstance().search(queryText, count, page).enqueue(object : Callback<GankFilterResult> {
+        RetrofitClient.INSTANCE.search(queryText, count, page).enqueue(object : Callback<GankFilterResult> {
             override fun onFailure(call: Call<GankFilterResult>, t: Throwable) {
                 callback.onDataNotAvailable()
             }
