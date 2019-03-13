@@ -11,6 +11,7 @@ Vettel's Gank 是一款完全使用 **Kotlin** 作为编程语言实现的 **[�
 * MVVM: 参考 [android-architecture](https://github.com/googlesamples/android-architecture) 中的 [todo-mvvm-live-kotlin](https://github.com/googlesamples/android-architecture/tree/todo-mvvm-live-kotlin) 
   
 ### 效果
+![](http://cjw-blog.oss-cn-shenzhen.aliyuncs.com/vettel_gank.jpg)
 
 ### 开源库
 * [Data Binding](https://developer.android.google.cn/topic/libraries/data-binding)  
