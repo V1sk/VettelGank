@@ -26,11 +26,19 @@
     <string name="about_app">Vettel\'s Gank是基于gank.io开放Api实现的一款非官方干货集中营客户端。\n\n官方网站：http://gank.io \n项目地址：https://github.com/V1sk/VettelGank\n作者博客：https://cjw-blog.net</string>
     <string name="video">休息视频</string>
     <string name="project_highlight">项目亮点</string>
-    <string name="highlight_tips">本项目使用Kotlin作为编程语言，展示了一些Kotlin优秀的语言特性，采用 \"Android Architecture
-        Blueprints\" 中的MVP架构作为实现基础，并实现了Repository的数据库缓存/内存缓存、Repository层的UI无感分页加载思路。使用AndroidX组件库以及
-        Jetpack构建更加可靠快速的程序。
+    <string name="highlight_tips">本项目使用Kotlin作为编程语言，展示了一些Kotlin优秀的语言特性，并且分别使用 MVP、MVVM 两种方式来实现；使用了Jetpack中的Architecture Components以及AndroidX，你可以Checkout到不同分支来对比它们之间的实现区别。
     </string>
     <string name="open_source">开源库</string>
-    <string name="open_source_content">Room:https://developer.android.google.cn/jetpack\nAnko:https://github.com/Kotlin/anko\nGlide:https://github.com/bumptech/glide\nPhotoView:https://github.com/chrisbanes/PhotoView\nGson:https://github.com/google/gson</string>
+    <string name="open_source_content">Data Binding: https://developer.android.google.cn/topic/libraries/data-binding\n
+        Room: https://developer.android.google.cn/topic/libraries/architecture/room\n
+        LiveData: https://developer.android.google.cn/topic/libraries/architecture/livedata\n
+        ViewModel: https://developer.android.google.cn/topic/libraries/architecture/viewmodel\n
+        Paging: https://developer.android.google.cn/topic/libraries/architecture/paging\n
+        AndroidX: https://developer.android.google.cn/jetpack/androidx\n
+        Anko: https://github.com/Kotlin/anko\n
+        Retrofit: https://github.com/square/retrofit\n
+        Glide: https://github.com/bumptech/glide\n
+        PhotoView: https://github.com/chrisbanes/PhotoView\n
+        Gson: https://github.com/google/gson\n</string>
     <string name="network_error">请求数据出现错误</string>
 </resources>
