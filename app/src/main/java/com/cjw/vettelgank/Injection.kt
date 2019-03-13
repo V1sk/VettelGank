@@ -21,13 +21,6 @@ object Injection {
         )
     }
 
-//    fun provideGankFilterRepository(): GankFilterRepository {
-//        return GankFilterRepository.getInstance(
-//            GankFilterRemoteSource.getInstance(),
-//            GankFilterLocalSource.getInstance()
-//        )
-//    }
-
     fun provideGankPagingRepository(): GankPagingRepository {
         return GankPagingRepository.getInstance()
     }
