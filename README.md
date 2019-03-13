@@ -13,11 +13,11 @@ Vettel's Gank 是一款完全使用 **Kotlin** 作为编程语言实现的 **[�
 ### 效果
 
 ### 开源库
-* [Data Binding](https://developer.android.google.cn/topic/libraries/data-binding/)  
+* [Data Binding](https://developer.android.google.cn/topic/libraries/data-binding)  
 * [Room](https://developer.android.google.cn/topic/libraries/architecture/room)  
 * [LiveData](https://developer.android.google.cn/topic/libraries/architecture/livedata)  
 * [ViewModel](https://developer.android.google.cn/topic/libraries/architecture/viewmodel)  
-* [Paging](https://developer.android.google.cn/topic/libraries/architecture/paging/)  
+* [Paging](https://developer.android.google.cn/topic/libraries/architecture/paging)  
 * [AndroidX](https://developer.android.google.cn/jetpack/androidx)  
 * [Anko](https://github.com/Kotlin/anko)  
 * [Retrofit](https://github.com/square/retrofit)  
