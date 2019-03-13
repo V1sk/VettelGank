@@ -13,6 +13,7 @@
         <item name="android:textColorSecondary">@color/textColorSecondary</item>
 
         <item name="android:listDivider">@drawable/divider</item>
+        <item name="android:textColorLink">@color/blue</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -35,7 +36,7 @@
     <style name="TextContentPrimary">
         <item name="android:textSize">15sp</item>
         <item name="android:textColor">@color/textColorPrimary</item>
-        <item name="android:lineSpacingMultiplier">1.2</item>
+        <item name="android:lineSpacingMultiplier">1.3</item>
     </style>
 
     <style name="TextContentSecondary">
