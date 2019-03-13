@@ -13,16 +13,15 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cjw.vettelgank.R
+import com.cjw.vettelgank.data.paging.NetworkState
 import com.cjw.vettelgank.databinding.ActivitySearchBinding
 import com.cjw.vettelgank.ext.hideKeyboard
 import com.cjw.vettelgank.ext.obtainViewModel
-import com.cjw.vettelgank.ui.adapter.GankFilterAdapter
-import com.cjw.vettelgank.ui.adapter.LoadMoreListener
+import com.cjw.vettelgank.ui.adapter.GankPagedAdapter
 import kotlinx.android.synthetic.main.activity_search.*
 
 
 class SearchActivity : AppCompatActivity(), View.OnClickListener {
-
 
     private lateinit var viewBinding: ActivitySearchBinding
     private lateinit var viewModel: SearchViewModel
@@ -43,31 +42,12 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
         viewModel = obtainViewModel(SearchViewModel::class.java)
         viewBinding.viewModel = viewModel
 
-        val adapter = GankFilterAdapter(mutableListOf())
+        val adapter = GankPagedAdapter{
+            viewModel.retry()
+        }
         viewBinding.rvSearchResult.layoutManager = LinearLayoutManager(this)
         viewBinding.rvSearchResult.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
         viewBinding.rvSearchResult.adapter = adapter
-        adapter.loadMoreListener = loadMoreListener
-
-        viewModel.data.observe(this, Observer {
-            if (!it.isNullOrEmpty())
-                adapter.replaceItems(it)
-        })
-
-        viewModel.loadMoreState.observe(this, Observer {
-            adapter.loadMoreCompleted()
-            adapter.loadingStatus = it
-        })
-
-        viewModel.netWorkError.observe(this, Observer {
-            Toast.makeText(this, R.string.network_error, Toast.LENGTH_SHORT).show()
-        })
-
-        viewModel.refreshing.observe(this, Observer {
-            viewBinding.rvSearchResult.post {
-                viewBinding.swipeRefreshLayout.isRefreshing = it
-            }
-        })
 
         viewBinding.btnClose.setOnClickListener(this)
         viewBinding.btnSearch.setOnClickListener(this)
@@ -79,13 +59,22 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
             }
             false
         }
+
+        viewModel.gankList.observe(this, Observer {
+            adapter.submitList(it)
+        })
+
+        viewBinding.viewModel?.refreshState?.observe(this, Observer {
+            viewBinding.rvSearchResult.post {
+                viewBinding.swipeRefreshLayout.isRefreshing = it == NetworkState.LOADING
+            }
+        })
+
+        viewBinding.viewModel?.networkState?.observe(this, Observer {
+            adapter.setNetworkState(it)
+        })
     }
 
-    private val loadMoreListener = object : LoadMoreListener {
-        override fun loadMore() {
-            viewModel.loadMore()
-        }
-    }
 
     private fun refresh() {
         val text = edt_search_box.text.toString().trim()
@@ -94,7 +83,7 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
             return
         }
         hideKeyboard()
-        viewModel.queryText = text
+        viewModel.search(text)
     }
 
     override fun onClick(v: View?) {
