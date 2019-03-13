@@ -16,6 +16,7 @@
 
         <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_gank_filter"
+                android:scrollbars="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
 
