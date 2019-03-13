@@ -13,6 +13,8 @@ Vettel's Gank 是一款完全使用 **Kotlin** 作为编程语言实现的 **[�
 ### 效果
 ![image](https://github.com/V1sk/VettelGank/raw/master/screenshot/vettel_gank.jpg)
 
+**视频：[http://cjw-blog.oss-cn-shenzhen.aliyuncs.com/vettel_gank.mp4](http://cjw-blog.oss-cn-shenzhen.aliyuncs.com/vettel_gank.mp4)**
+
 ### 开源库
 * [Data Binding](https://developer.android.google.cn/topic/libraries/data-binding)  
 * [Room](https://developer.android.google.cn/topic/libraries/architecture/room)  
