@@ -29,7 +29,6 @@ class GankPagingDataSource(
     }
 
     override fun loadInitial(params: LoadInitialParams<Int>, callback: LoadInitialCallback<Int, Gank>) {
-        networkState.postValue(NetworkState.LOADING)
         initialLoad.postValue(NetworkState.LOADING)
         gankService.gankFilter(currentFiltering, params.requestedLoadSize, 1)
             .enqueue(object : retrofit2.Callback<GankFilterResult> {
@@ -38,7 +37,6 @@ class GankPagingDataSource(
                     retry = {
                         loadInitial(params, callback)
                     }
-                    networkState.postValue(NetworkState.FAILED)
                     initialLoad.postValue(NetworkState.FAILED)
                 }
 
@@ -49,13 +47,11 @@ class GankPagingDataSource(
                             response.body()?.results ?: emptyList(),
                             null, 2
                         )
-                        networkState.postValue(NetworkState.LOADED)
                         initialLoad.postValue(NetworkState.LOADED)
                     } else {
                         retry = {
                             loadInitial(params, callback)
                         }
-                        networkState.postValue(NetworkState.FAILED)
                         initialLoad.postValue(NetworkState.FAILED)
                     }
                 }

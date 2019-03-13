@@ -1,71 +1,36 @@
 package com.cjw.vettelgank.ui.adapter
 
-import android.text.TextUtils
-import android.view.ViewGroup
-import androidx.paging.PagedListAdapter
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.RecyclerView
+import android.view.View
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.cjw.vettelgank.R
 import com.cjw.vettelgank.data.Gank
-import com.cjw.vettelgank.data.paging.NetworkState
-import com.cjw.vettelgank.ui.adapter.holder.PagingStateHolder
-import com.cjw.vettelgank.ui.adapter.holder.WelfareHolder
+import com.cjw.vettelgank.ui.gallery.GalleryActivity
+import kotlinx.android.synthetic.main.recycler_item_welfare.view.*
 
-class WelfarePagedAdapter(private val retryCallback: () -> Unit) :
-    PagedListAdapter<Gank, RecyclerView.ViewHolder>(GANK_COMPARATOR) {
+class WelfarePagedAdapter(retryCallback: () -> Unit) :
+    BaseGankPagedAdapter(R.layout.recycler_item_welfare, retryCallback) {
 
-    private var networkState: NetworkState? = null
+    override fun render(itemView: View, data: Gank?) {
+        Glide.with(itemView.context)
+            .applyDefaultRequestOptions(RequestOptions().apply {
+                centerCrop()
+            })
+            .load(data?.url)
+            .into(itemView.iv_welfare)
+        itemView.tag = data
+        itemView.setOnClickListener(onclickListener)
+    }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return when (viewType) {
-            R.layout.layout_loading_more -> {
-                PagingStateHolder.create(parent, retryCallback)
-            }
-            R.layout.recycler_item_welfare -> {
-                WelfareHolder.create(parent)
-            }
-            else -> {
-                throw IllegalArgumentException("unknown view type: $viewType")
-            }
+    private val onclickListener = View.OnClickListener {
+        if (currentList.isNullOrEmpty())
+            return@OnClickListener
+        val gank = it.tag as Gank
+        val position = currentList?.indexOf(gank)
+        if (position != null) {
+            GalleryActivity.start(it.context, position, currentList?.toList() as ArrayList<Gank>)
         }
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        when (getItemViewType(position)) {
-            R.layout.layout_loading_more -> {
-                (holder as PagingStateHolder).status = networkState
-            }
-            R.layout.recycler_item_welfare -> {
-                (holder as WelfareHolder).bind(getItem(position)!!)
-            }
-        }
-    }
-
-    private fun hasExtraRow() = networkState != null && networkState != NetworkState.LOADED
-
-    override fun getItemViewType(position: Int): Int {
-        return if (hasExtraRow() && position == itemCount - 1) {
-            R.layout.layout_loading_more
-        } else {
-            R.layout.recycler_item_welfare
-        }
-    }
-
-    override fun getItemCount(): Int {
-        return super.getItemCount() + if (hasExtraRow()) 1 else 0
-    }
-
-    companion object {
-        val GANK_COMPARATOR = object : DiffUtil.ItemCallback<Gank>() {
-            override fun areItemsTheSame(oldItem: Gank, newItem: Gank): Boolean {
-                return TextUtils.equals(oldItem._id, newItem._id)
-            }
-
-            override fun areContentsTheSame(oldItem: Gank, newItem: Gank): Boolean {
-                return TextUtils.equals(oldItem.url, newItem.url)
-            }
-
-        }
-    }
 
 }
