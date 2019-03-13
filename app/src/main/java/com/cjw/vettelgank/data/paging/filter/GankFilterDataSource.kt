@@ -1,4 +1,4 @@
-package com.cjw.vettelgank.data.paging
+package com.cjw.vettelgank.data.paging.filter
 
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.PageKeyedDataSource
@@ -6,10 +6,11 @@ import com.cjw.vettelgank.Injection
 import com.cjw.vettelgank.data.Gank
 import com.cjw.vettelgank.data.GankFilterResult
 import com.cjw.vettelgank.data.api.GankService
+import com.cjw.vettelgank.data.paging.NetworkState
 import retrofit2.Call
 import retrofit2.Response
 
-class GankPagingDataSource(
+class GankFilterDataSource(
     private val currentFiltering: String,
     private val gankService: GankService = Injection.provideGankService()
 ) : PageKeyedDataSource<Int, Gank>() {

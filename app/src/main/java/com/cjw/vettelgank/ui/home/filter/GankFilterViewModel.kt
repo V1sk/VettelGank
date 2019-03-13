@@ -4,9 +4,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations.map
 import androidx.lifecycle.Transformations.switchMap
 import androidx.lifecycle.ViewModel
-import com.cjw.vettelgank.data.paging.GankPagingRepository
+import com.cjw.vettelgank.data.paging.filter.GankFilterRepository
 
-class GankFilterViewModel(private val gankFilterRepository: GankPagingRepository) : ViewModel() {
+class GankFilterViewModel(private val gankFilterRepository: GankFilterRepository) : ViewModel() {
 
     private val currentFiltering = MutableLiveData<String>()
     private val gankResult = map(currentFiltering) {

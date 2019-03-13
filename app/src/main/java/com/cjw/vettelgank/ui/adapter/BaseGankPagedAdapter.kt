@@ -24,6 +24,36 @@ abstract class BaseGankPagedAdapter(
     private var networkState: NetworkState? = null
     private var layoutManager: RecyclerView.LayoutManager? = null
 
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return when (viewType) {
+            VIEW_TYPE_LOAD_MORE -> {
+                PagingStateHolder.create(parent, retryCallback)
+            }
+            else -> {
+                BaseViewHolder.create(parent, layoutResId)
+            }
+        }
+    }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when (holder) {
+            is BaseViewHolder -> {
+                render(holder.itemView, getItem(position))
+            }
+            is PagingStateHolder -> {
+                holder.status = networkState
+            }
+        }
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return if (hasExtraRow() && position == itemCount - 1) {
+            VIEW_TYPE_LOAD_MORE
+        } else {
+            VIEW_TYPE_DATA
+        }
+    }
+
     override fun getItemCount(): Int {
         return super.getItemCount() + if (hasExtraRow()) 1 else 0
     }
@@ -58,36 +88,6 @@ abstract class BaseGankPagedAdapter(
                     }
                 }
             }
-        }
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return when (viewType) {
-            BaseAdapter.VIEW_TYPE_LOAD_MORE -> {
-                PagingStateHolder.create(parent, retryCallback)
-            }
-            else -> {
-                BaseViewHolder.create(parent, layoutResId)
-            }
-        }
-    }
-
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        when (holder) {
-            is BaseViewHolder -> {
-                render(holder.itemView, getItem(position))
-            }
-            is PagingStateHolder -> {
-                holder.status = networkState
-            }
-        }
-    }
-
-    override fun getItemViewType(position: Int): Int {
-        return if (hasExtraRow() && position == itemCount - 1) {
-            VIEW_TYPE_LOAD_MORE
-        } else {
-            VIEW_TYPE_DATA
         }
     }
 

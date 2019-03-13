@@ -1,19 +1,21 @@
-package com.cjw.vettelgank.data.paging
+package com.cjw.vettelgank.data.paging.filter
 
 import androidx.lifecycle.Transformations
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import com.cjw.vettelgank.data.Gank
+import com.cjw.vettelgank.data.paging.Listing
 
-class GankPagingRepository {
+class GankFilterRepository {
 
     companion object {
         private const val PAGE_SIZE = 30
-        private var INSTANCE: GankPagingRepository? = null
+        private var INSTANCE: GankFilterRepository? = null
 
         @JvmStatic
-        fun getInstance(): GankPagingRepository {
-            return INSTANCE ?: GankPagingRepository().apply {
+        fun getInstance(): GankFilterRepository {
+            return INSTANCE
+                ?: GankFilterRepository().apply {
                 INSTANCE = this
             }
         }
@@ -21,7 +23,7 @@ class GankPagingRepository {
 
     fun gankFilter(currentFiltering: String): Listing<Gank> {
 
-        val sourceFactory = GankPagingDataSourceFactory(currentFiltering)
+        val sourceFactory = GankFilterDataSourceFactory(currentFiltering)
 
         val config = PagedList.Config.Builder()
             .setPageSize(PAGE_SIZE)
