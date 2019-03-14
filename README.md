@@ -1,6 +1,8 @@
 # VettelGank
 Vettel's Gank 是一款完全使用 **Kotlin** 作为编程语言实现的 **[干货集中营](http://gank.io/)** 客户端。本项目展示了一些Kotlin的优秀语言特性，并且分别使用 **MVP、MVVM** 两种方式来实现；使用了Jetpack中的Architecture Components以及AndroidX，你可以Checkout到不同分支来对比它们之间的实现区别。  
   
+Room、LiveData、ViewModel、Paging、DataBinding这些库怎么结合起来使用？怎样用AndroidX取代Support Library？传统MVP和基于Jetpack实现的MVVM有什么区别？这个App应该能给大家一点启发。欢迎star/fork。
+  
 ### 分支含义 
 1. **kotlin-mvp-base:** 使用 Kotlin + MVP 实现的基础版本，此分支主要展示了Kotlin基础的使用，对于入门Kotlin比较友好  
 2. **kotlin-mvvm-jetpack:** 使用 Kotlin + MVVM 实现，展示了Android Jetpack中架构组件的使用（包括：DataBinding、LiveData、ViewModel、 Room）  
