@@ -27,8 +27,11 @@ class WelfarePagedAdapter(retryCallback: () -> Unit) :
             return@OnClickListener
         val gank = it.tag as Gank
         val position = currentList?.indexOf(gank)
-        if (position != null) {
-            GalleryActivity.start(it.context, position, currentList?.toList() as ArrayList<Gank>)
+        val list = currentList?.toList()
+        if (position != null && list != null) {
+            GalleryActivity.start(it.context, position, list.map { gank ->
+                gank.url
+            } as ArrayList<String>)
         }
     }
 
