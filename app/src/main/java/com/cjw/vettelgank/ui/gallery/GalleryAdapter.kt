@@ -7,10 +7,9 @@ import androidx.viewpager.widget.PagerAdapter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.cjw.vettelgank.R
-import com.cjw.vettelgank.data.Gank
 import kotlinx.android.synthetic.main.item_gallery.view.*
 
-class GalleryAdapter(val gankList: List<Gank>) : PagerAdapter() {
+class GalleryAdapter(private val gankList: List<String>) : PagerAdapter() {
 
     override fun isViewFromObject(view: View, `object`: Any): Boolean {
         return view == `object`
@@ -25,7 +24,7 @@ class GalleryAdapter(val gankList: List<Gank>) : PagerAdapter() {
         val gank = gankList[position]
         Glide.with(container.context)
             .applyDefaultRequestOptions(RequestOptions().apply { centerCrop() })
-            .load(gank.url)
+            .load(gank)
             .into(itemView.photo_view)
         container.addView(itemView)
         return itemView

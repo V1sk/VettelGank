@@ -8,8 +8,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager.widget.ViewPager
 import com.cjw.vettelgank.R
-import com.cjw.vettelgank.data.Gank
-import com.cjw.vettelgank.ext.getDateString
 import com.cjw.vettelgank.ext.setupToolBar
 import kotlinx.android.synthetic.main.activity_gallery.*
 
@@ -21,16 +19,16 @@ class GalleryActivity : AppCompatActivity() {
         private const val EXTRA_GANK_LIST = "gank_list"
 
         @JvmStatic
-        fun start(context: Context, index: Int, gankList: ArrayList<Gank>) {
+        fun start(context: Context, index: Int, gankList: ArrayList<String>) {
             val intent = Intent(context, GalleryActivity::class.java)
             intent.putExtra(EXTRA_INDEX, index)
-            intent.putParcelableArrayListExtra(EXTRA_GANK_LIST, gankList)
+            intent.putStringArrayListExtra(EXTRA_GANK_LIST, gankList)
             context.startActivity(intent)
         }
     }
 
     private var index: Int = 0
-    private lateinit var gankList: List<Gank>
+    private lateinit var gankList: List<String>
     private lateinit var pagerAdapter: GalleryAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,7 +40,7 @@ class GalleryActivity : AppCompatActivity() {
                 setDisplayHomeAsUpEnabled(true)
                 setHomeAsUpIndicator(R.drawable.ic_arrow_back_black_24dp)
             }
-            title = gankList[index].publishedAt.getDateString()
+//            title = gankList[index].publishedAt.getDateString()
             pagerAdapter = GalleryAdapter(gankList)
             view_pager.adapter = pagerAdapter
             view_pager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
@@ -54,7 +52,7 @@ class GalleryActivity : AppCompatActivity() {
                 }
 
                 override fun onPageSelected(position: Int) {
-                    title = gankList[position].publishedAt.getDateString()
+//                    title = gankList[position].publishedAt.getDateString()
                     pb_gallery.progress = (((position + 1) / gankList.size.toFloat()) * 100).toInt()
                 }
 
@@ -86,7 +84,7 @@ class GalleryActivity : AppCompatActivity() {
             finish()
             return false
         }
-        gankList = intent.getParcelableArrayListExtra(EXTRA_GANK_LIST)
+        gankList = intent.getStringArrayListExtra(EXTRA_GANK_LIST)
         return true
     }
 }

@@ -14,9 +14,13 @@ class WelfareAdapter(
     BaseAdapter<Gank>(gankList, R.layout.recycler_item_welfare) {
 
     private val onclickListener = View.OnClickListener {
+        if (gankList.isNullOrEmpty())
+            return@OnClickListener
         val gank = it.tag as Gank
         val position = gankList.indexOf(gank)
-        GalleryActivity.start(it.context, position, gankList as ArrayList<Gank>)
+        GalleryActivity.start(it.context, position, gankList.map { gank ->
+            gank.url
+        } as ArrayList<String>)
     }
 
     override fun render(itemView: View, data: Gank) {
