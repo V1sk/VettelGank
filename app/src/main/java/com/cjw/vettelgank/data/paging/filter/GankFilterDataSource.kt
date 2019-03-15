@@ -31,6 +31,7 @@ class GankFilterDataSource(
 
     override fun loadInitial(params: LoadInitialParams<Int>, callback: LoadInitialCallback<Int, Gank>) {
         initialLoad.postValue(NetworkState.LOADING)
+        networkState.postValue(NetworkState.HIDDEN)
         gankService.gankFilter(currentFiltering, params.requestedLoadSize, 1)
             .enqueue(object : retrofit2.Callback<GankFilterResult> {
 

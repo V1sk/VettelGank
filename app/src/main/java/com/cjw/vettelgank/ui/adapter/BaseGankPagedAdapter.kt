@@ -57,7 +57,7 @@ abstract class BaseGankPagedAdapter(
         return super.getItemCount() + if (hasExtraRow()) 1 else 0
     }
 
-    private fun hasExtraRow() = networkState != null
+    private fun hasExtraRow() = networkState != null && networkState != NetworkState.HIDDEN
 
     fun setNetworkState(newNetworkState: NetworkState) {
         val previousState = this.networkState

@@ -31,6 +31,7 @@ class GankSearchDataSource(
 
     override fun loadInitial(params: LoadInitialParams<Int>, callback: LoadInitialCallback<Int, Gank>) {
         initialLoad.postValue(NetworkState.LOADING)
+        networkState.postValue(NetworkState.HIDDEN)
         gankService.search(queryText, params.requestedLoadSize, 1)
             .enqueue(object : retrofit2.Callback<GankFilterResult> {
                 override fun onFailure(call: Call<GankFilterResult>, t: Throwable) {
