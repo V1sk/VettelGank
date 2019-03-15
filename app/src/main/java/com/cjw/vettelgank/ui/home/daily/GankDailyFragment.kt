@@ -43,7 +43,8 @@ class GankDailyFragment : Fragment() {
             (viewBinding.rvGankDaily.adapter as GankDailyAdapter).replaceItems(it)
         })
         viewBinding.viewModel?.netWorkError?.observe(viewLifecycleOwner, Observer {
-            Toast.makeText(activity, R.string.network_error, Toast.LENGTH_SHORT).show()
+            if (it)
+                Toast.makeText(activity, R.string.network_error, Toast.LENGTH_SHORT).show()
         })
 
         //load data if empty
