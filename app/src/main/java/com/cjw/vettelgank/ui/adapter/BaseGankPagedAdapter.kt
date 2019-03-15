@@ -7,7 +7,6 @@ import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.cjw.vettelgank.R
 import com.cjw.vettelgank.data.Gank
 import com.cjw.vettelgank.data.paging.NetworkState
 import com.cjw.vettelgank.ui.adapter.holder.BaseViewHolder
@@ -58,7 +57,7 @@ abstract class BaseGankPagedAdapter(
         return super.getItemCount() + if (hasExtraRow()) 1 else 0
     }
 
-    private fun hasExtraRow() = networkState != null && networkState != NetworkState.LOADED
+    private fun hasExtraRow() = networkState != null
 
     fun setNetworkState(newNetworkState: NetworkState) {
         val previousState = this.networkState
@@ -83,7 +82,7 @@ abstract class BaseGankPagedAdapter(
             (layoutManager as GridLayoutManager).spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                 override fun getSpanSize(position: Int): Int {
                     return when (getItemViewType(position)) {
-                        R.layout.layout_loading_more -> (layoutManager as GridLayoutManager).spanCount
+                        VIEW_TYPE_LOAD_MORE -> (layoutManager as GridLayoutManager).spanCount
                         else -> 1
                     }
                 }
