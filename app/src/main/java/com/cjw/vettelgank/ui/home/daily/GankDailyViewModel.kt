@@ -33,6 +33,7 @@ class GankDailyViewModel(private val gankDailyRepository: GankDailyRepository) :
 
         override fun onGankLoaded(gankDailyData: GankDailyData) {
             _refreshing.value = false
+            _netWorkError.value = false
             _gankItemList.value = gankDailyData.toGankUIItem()
         }
 
